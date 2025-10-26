@@ -23,17 +23,40 @@ namespace RareCrewCSharp.Services
 
         public async Task<List<Employee>> GetEmployees()
         {
-            var response=await _httpClient.GetAsync(_url+"/"+_endpoint+"?code="+_key);
-            response.EnsureSuccessStatusCode();
+            string url=_url+"/"+_endpoint+"?code="+_key;
+            List<Employee> result = new List<Employee> { };
 
-            var json=await response.Content.ReadAsStringAsync();
-
-            var data = JsonSerializer.Deserialize<List<EmployeeDTO>>(json, new JsonSerializerOptions
+            try
             {
-                PropertyNameCaseInsensitive = true
-            }) ?? new List<EmployeeDTO>();
+                var response=await _httpClient.GetAsync(url);
+                response.EnsureSuccessStatusCode();
 
-            return ValidateEmployees(data);
+                var json=await response.Content.ReadAsStringAsync();
+
+                if (string.IsNullOrEmpty(json))
+
+                {
+                    Console.WriteLine("Employee response is empty.");
+                    return result;
+                }
+                var data = JsonSerializer.Deserialize<List<EmployeeDTO>>(json, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                });
+
+                if (data == null)
+                {
+                    Console.WriteLine("Failed to parse data");
+                    return result;
+                }
+                result = ValidateEmployees(data);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Unexpected error: "+ex.Message);
+            }
+
+            return result;
 
         }
 
