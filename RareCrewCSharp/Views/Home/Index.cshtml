@@ -1,0 +1,22 @@
+﻿@model List<RareCrewCSharp.Models.Employee>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Employee Name</th>
+            <th>Total Hours</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            var rowClass = employee.TotalHours < 100 ? "table-danger" : "";
+            <tr class="@rowClass">
+                <td>@employee.EmployeeName</td>
+                <td>@employee.TotalHours.ToString("0.##")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<h2>Pie Chart</h2>
+<img src="/img/EmployeeChart.png" alt="Pie Chart" />
